@@ -1,0 +1,31 @@
+version: "3"
+
+services:
+  api:
+    build: ./api
+    command: /bin/sh -c 'npm run build:watch & nodemon .'
+    environment:
+      - HOST=0.0.0.0
+      - PORT=3000
+    volumes:
+      - ./api:/app
+    ports:
+      - "3000:3000"
+    networks:
+      - frontend
+      - backend
+
+  db:
+    image: mongo:4.0
+    volumes:
+      - "db-data:/data/db"
+    networks:
+      - backend
+
+volumes:
+  db-data:
+
+networks:
+  frontend:
+  backend:
+

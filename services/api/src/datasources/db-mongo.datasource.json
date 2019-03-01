@@ -1,0 +1,10 @@
+{
+  "name": "dbMongo",
+  "connector": "mongodb",
+  "url": "",
+  "host": "db",
+  "port": 27017,
+  "user": "",
+  "password": "",
+  "database": "hello"
+}

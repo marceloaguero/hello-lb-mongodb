@@ -1,0 +1,35 @@
+### STAGE 1: Build ###
+FROM ikigaisoft/lb-mongo-base as builder
+
+WORKDIR /app
+
+RUN npm config set registry https://registry.npmjs.org && \
+    npm cache clean --force
+
+COPY package*.json /app/
+RUN npm install
+
+COPY . /app
+
+## Compile the app and store the artifacts in dist folder
+RUN npm run build && \
+    rm -fr node_modules && \
+    npm install --production
+
+
+### STAGE 2: Setup ###
+FROM node:dubnium-alpine
+
+WORKDIR /app
+
+RUN npm install -g pm2
+
+## From 'builder' stage copy needed files
+COPY --from=builder /app/package.json /app/
+COPY --from=builder /app/node_modules /app/node_modules
+COPY --from=builder /app/index.js /app/
+COPY --from=builder /app/dist /app/dist
+
+EXPOSE 3000
+
+CMD ["pm2-docker", "index.js"]
